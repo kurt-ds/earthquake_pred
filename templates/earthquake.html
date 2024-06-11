@@ -1,86 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
-  <title>Earthquake Classification</title>
-  <!-- FONTS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">   
-  <!-- CSS  -->
-   <link rel="stylesheet" href="static/css/materialize.css">
-   <link rel="stylesheet" href="static/css/style.css">
-</head>
-
-<body>
-  <div class="section no-pad-bot" id="index-banner">
-    <div class="container">
-      <br><br>
-      <h1 class="header center orange-text">Earthquake Classification</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">Predict the earthquake classification in the Philippines
-        <br>
-        </h5>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earthquake Classification</title>
+    <!-- Tailwind CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dist/css/output.css') }}"
+    />
+  </head>
+  <body class="bg-primary-500 font-display my-16">
+    <div class="flex flex-col min-h-screen justify-center items-center">
+      <h1 class="text-4xl font-bold text-center text-white">
+        Earthquake Classification
+      </h1>
+      <div class="container mx-auto px-10">
+        <div class="text-center mt-4">
+          <h5 class="text-xl text-white/80">
+            Predict the earthquake classification in the Philippines
+          </h5>
+        </div>
+        <div class="grid grid-cols-1 gap-10 mt-10 max-w-4xl mx-auto">
+          <div>
+            <form
+              action="/predict"
+              method="post"
+              class="bg-white p-8 rounded-3xl shadow-lg"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label
+                    for="first_name"
+                    class="block text-secondary-500 font-bold mb-2"
+                    >Date</label
+                  >
+                  <input
+                    placeholder="Date of the earthquake"
+                    name="Date"
+                    id="first_name"
+                    type="date"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="last_name"
+                    class="block text-secondary-500 font-bold mb-2"
+                    >Time</label
+                  >
+                  <input
+                    id="last_name"
+                    name="Time"
+                    placeholder="Time occurred"
+                    type="time"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="_latitude"
+                    class="block text-secondary-500 font-bold mb-2"
+                    >Latitude</label
+                  >
+                  <input
+                    id="_latitude"
+                    name="Latitude"
+                    placeholder="Latitude in degrees"
+                    type="number"
+                    step=".01"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="_longitude"
+                    class="block text-secondary-500 font-bold mb-2"
+                    >Longitude</label
+                  >
+                  <input
+                    id="_longitude"
+                    name="Longitude"
+                    placeholder="Longitude in degrees"
+                    type="number"
+                    step=".01"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="_zipcode"
+                    class="block text-secondary-500 font-bold mb-2"
+                    >Zipcode</label
+                  >
+                  <input
+                    id="_zipcode"
+                    name="Zipcode"
+                    placeholder="Zipcode of the location"
+                    type="number"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              </div>
+              <div class="text-center mt-8">
+                <button
+                  type="submit"
+                  class="bg-primary-500 text-neutral-100 px-6 py-3 rounded-lg shadow hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  Predict Earthquake Classification
+                </button>
+              </div>
+            </form>
+          </div>
+          {% if pred %}
+          <div class="text-2xl text-white uppercase text-center">
+            EARTHQUAKE CATEGORY: <strong>{{ pred }}</strong>
+          </div>
+          {% endif %}
+          <div
+            class="w-full bg-white px-4 py-10 shadow-lg rounded-3xl max-h-96 overflow-auto"
+          >
+            <div class="px-4 sm:px-6 lg:px-8">
+              <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                  <h1 class="text-base font-semibold leading-6 text-gray-900">
+                    Richter scale of earthquake magnitude
+                  </h1>
+                </div>
+              </div>
+              <div class="mt-8 flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                  <div
+                    class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
+                  >
+                    <div
+                      class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+                    >
+                      <table class="min-w-full divide-y divide-gray-300">
+                        <thead class="bg-gray-50">
+                          <tr>
+                            <th
+                              scope="col"
+                              class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                            >
+                              Magnitude Level
+                            </th>
+                            <th
+                              scope="col"
+                              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Category
+                            </th>
+                            <th
+                              scope="col"
+                              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Effects
+                            </th>
+                            <th
+                              scope="col"
+                              class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Earthquakes per Year
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                          {% for item in richter_data %}
+                          <tr>
+                            <td
+                              class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                            >
+                              {{ item.magnitude }}
+                            </td>
+                            <td
+                              class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                            >
+                              {{ item.category }}
+                            </td>
+                            <td
+                              class="px-3 py-4 text-sm text-gray-500 max-w-40 w-max"
+                            >
+                              {{ item.effects }}
+                            </td>
+                            <td
+                              class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"
+                            >
+                              {{ item.per_year }}
+                            </td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
-              <div class="row">
-    <form action='/predict' method="post" class="col s12">
-      <div class="row">
-        <div class="input-field col s4">
-            <label for="first_name"><b>Date</b></label>
-            <br>
-          <input placeholder="Date of the earthquake" name="Date" id="first_name" type="date" class="validate">
-        </div>
-        <div class="input-field col s4">
-
-          <label for="last_name"><b>Time </b></label>
-            <br>
-          <input id="last_name" name="Time" placeholder="Time occured"  type="time" class="validate">
-
-        </div>
-
-        <div class="input-field col s4">
-            <label for="_name"><b>Latitude</b></label>
-            <br>
-          <input id="_name" name="Latitude" placeholder="Latitude in degrees" type="number" step=".01" class="validate">
-
-        </div>
-        <div class="input-field col s4">
-          <label for="_name"><b>Longitude</b></label>
-          <br>
-        <input id="_name" name="Longitude" placeholder="Longitude in degrees" type="number" step=".01" class="validate">
-
-      </div>
-      <div class="input-field col s4">
-        <label for="_name"><b>Zipcode</b></label>
-        <br>
-      <input id="_name" name="Zipcode" placeholder="Zipcode of the location" type="number" class="validate">
-
     </div>
-
-      </div>
-
-      <div class="row center">
-
-          <button type="submit" class="btn-large waves-effect waves-light orange">Predict Earthquake Classification</button>
-      </div>
-    </form>
-      </div>
-
-      <br>
-        {{pred}}<br>
-
-    </div>
-  </div>
-
-  </div>
-  </div>
-
-  <!--  Scripts-->
-  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-  <script src=".js/materialize.js"></script>
-  <script src="js/init.js"></script>
-
   </body>
 </html>
