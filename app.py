@@ -35,6 +35,9 @@ def getClass(richter_value):
     else:
         return "Invalid Richter value"
 
+# Load earthquake data from CSV file
+earthquake_data = pd.read_csv("earthquake_dataset.csv")
+
 @app.route('/')
 def index():
     richter_data = [
@@ -46,7 +49,23 @@ def index():
         {"magnitude": "7.0-7.9", "category": "major", "effects": "serious damage over large areas; loss of life", "per_year": "3–20"},
         {"magnitude": "8.0 and higher", "category": "great", "effects": "severe destruction and loss of life over large areas", "per_year": "fewer than 3"},
     ]
-    return render_template('earthquake.html', richter_data=richter_data)
+
+    earthquake_data['Richter Category'] = earthquake_data['Richter Category'].apply(getClass)
+
+    fig = px.density_mapbox(earthquake_data, lat='Latitude(ÂºN)', lon='Longitude(ÂºE)',
+                            z='Mag', radius=10, hover_name='Richter Category',
+                            title='Philippine Seismic Activity Map (2018-2024)',
+                            zoom=4.25)
+
+    fig.update_layout(
+        mapbox_style="open-street-map",
+        height=600,
+        margin={"r": 50, "t": 100, "l": 50, "b": 50},
+    )
+
+    fig_container = fig.to_html(full_html=False)    
+    return render_template('earthquake.html', richter_data=richter_data, fig=fig_container)
+
 
 @app.route('/predict', methods=['POST', 'GET'])
 def predict():
@@ -77,7 +96,6 @@ def predict():
     prediction = model.predict([new_data])[0]
     category = getClass(prediction)
 
-   # Create a DataFrame with the input data and predicted category
     df = pd.DataFrame({
         'Day': [day],
         'Month': [month],
@@ -88,14 +106,12 @@ def predict():
         'Richter Category': [category]
     })
 
-    # Create a Plotly map figure using plotly.express
     fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude',
                             color='Richter Category',
                             title='Philippine Earthquake Prediction Map',
                             zoom=12,
                             color_discrete_sequence=["fuchsia"])
 
-    # Customize the layout
     fig.update_layout(
         mapbox_style="open-street-map",
         height=600,
