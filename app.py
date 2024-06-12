@@ -38,6 +38,11 @@ def getClass(richter_value):
 # Load earthquake data from CSV file
 earthquake_data = pd.read_csv("earthquake_dataset.csv")
 
+# Create a new column 'DateTime' in the desired format
+earthquake_data['DateTime'] = (' Date: ' + earthquake_data['Day'].astype(str) + '/' + 
+                               earthquake_data['Month'].astype(str) + '/' + 
+                               earthquake_data['Year'].astype(str))
+
 @app.route('/')
 def index():
     richter_data = [
@@ -50,21 +55,23 @@ def index():
         {"magnitude": "8.0 and higher", "category": "great", "effects": "severe destruction and loss of life over large areas", "per_year": "fewer than 3"},
     ]
 
-    # Remove special characters from latitude and longitude column names
-    earthquake_data.rename(columns=lambda x: x.replace('Latitude(ÂºN)', 'Latitude').replace('Longitude(ÂºE)', 'Longitude'), inplace=True)
-
     # Density Mapbox
     # fig = px.density_mapbox(earthquake_data, lat='Latitude', lon='Longitude',
-    #                         z='Mag', radius=4, hover_name='Day',
+    #                         z='Richter Category', radius=4, hover_name='DateTime',
     #                         title='Philippine Seismic Activity Map (2018-2024)',
     #                         zoom=4.25)
     
     # Scatter Mapbox
     fig = px.scatter_mapbox(earthquake_data, lat='Latitude', lon='Longitude',
                             color='Richter Category',
+                            animation_frame='DateTime',
+                            height=900,
+                            animation_group='Richter Category',
+                            size='Magnitude',
+                            hover_name='DateTime',
                             title='Philippine Seismic Activity Map (2018-2024)',
                             zoom=3.75,
-                            color_discrete_sequence=["fuchsia"])    
+                            color_discrete_sequence=["fuchsia"]) 
 
     fig.update_layout(
         mapbox_style="open-street-map",
