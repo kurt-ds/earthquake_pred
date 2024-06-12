@@ -7,7 +7,7 @@ import pickle
 warnings.filterwarnings("ignore")
 
 data = pd.read_csv('earthquake_dataset.csv')
-X = data.drop(['Richter Category', 'Mag', 'Depth(km)', 'City', 'Province', 'Distance(km)'], axis=1)
+X = data.drop(['Richter Category', 'Magnitude', 'Depth(km)', 'City', 'Province', 'Distance(km)'], axis=1)
 y = data['Richter Category']
 
 
@@ -27,3 +27,4 @@ pickle.dump(gb_classifier, open('model.pkl', 'wb'))
 model = pickle.load(open('model.pkl', 'rb'))
 
 print(f'Accuracy: {acc_gb}')
+print(f'X_columns: {X.columns}')

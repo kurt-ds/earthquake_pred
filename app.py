@@ -91,6 +91,7 @@ def predict():
     date_obj = datetime.strptime(date, "%Y-%m-%d")
     day = int(date_obj.day)
     month = int(date_obj.month)
+    year = int(date_obj.year)
 
     time = request.form.get('Time')
     time = int(convert_to_24h_int(time))
@@ -100,14 +101,17 @@ def predict():
 
     zipcode = int(request.form.get('Zipcode'))
 
-    new_data = [day, month, time, latitude, longitude, zipcode]
-    prediction = model.predict([new_data])[0]
+    new_data = [day, month, year, time, latitude, longitude, zipcode]
+    feature_names = ['Day', 'Month', 'Year', 'Time', 'Latitude', 'Longitude', 'Zip Code']
+    to_pred = pd.DataFrame(data=[new_data], columns=feature_names)
+    prediction = model.predict(to_pred)[0]
     category = getClass(prediction)
 
     df = pd.DataFrame({
         'Day': [day],
         'Month': [month],
         'Time': [time],
+        'Year': [year],
         'Latitude': [latitude],
         'Longitude': [longitude],
         'Zipcode': [zipcode],
