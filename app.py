@@ -1,7 +1,10 @@
-from flask import Flask, request, url_for, redirect, render_template
+from flask import Flask, request, render_template
 import pickle
 import numpy as np
 from datetime import datetime
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 
 app = Flask(__name__)
 
@@ -71,15 +74,41 @@ def predict():
     zipcode = int(request.form.get('Zipcode'))
 
     new_data = [day, month, time, latitude, longitude, zipcode]
-
     prediction = model.predict([new_data])[0]
-
     category = getClass(prediction)
 
+   # Create a DataFrame with the input data and predicted category
+    df = pd.DataFrame({
+        'Day': [day],
+        'Month': [month],
+        'Time': [time],
+        'Latitude': [latitude],
+        'Longitude': [longitude],
+        'Zipcode': [zipcode],
+        'Richter Category': [category]
+    })
+
+    # Create a Plotly map figure using plotly.express
+    fig = px.scatter_mapbox(df, lat='Latitude', lon='Longitude',
+                            color='Richter Category',
+                            title='Philippine Earthquake Prediction Map',
+                            zoom=12,
+                            color_discrete_sequence=["fuchsia"])
+
+    # Customize the layout
+    fig.update_layout(
+        mapbox_style="open-street-map",
+        height=600,
+        margin={"r": 50, "t": 100, "l": 50, "b": 50},
+        legend_title_text='Category using Richter Scale',title_font_size=40, title_y=0.97
+    )
+
+    fig_container = fig.to_html(full_html=False)
+
     if (len(category) > 8):
-        return render_template('earthquake.html', pred=category, richter_data=richter_data)
+        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container)
     else:
-        return render_template('earthquake.html', pred=category, richter_data=richter_data)
+        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container)
 
 if __name__ == '__main__':
     app.run(debug=True)
