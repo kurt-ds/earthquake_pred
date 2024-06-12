@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import warnings
 import pickle
@@ -14,7 +14,7 @@ y = data['Richter Category']
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.30,random_state=0)
 from sklearn.metrics import accuracy_score
 
-gb_classifier = GradientBoostingClassifier(n_estimators=50, learning_rate=0.1, max_depth=3,random_state=0)
+gb_classifier = RandomForestClassifier(n_estimators=100)
 gb_classifier.fit(X_train, y_train)
 
 #make predictions and store data for later
