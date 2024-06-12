@@ -50,12 +50,21 @@ def index():
         {"magnitude": "8.0 and higher", "category": "great", "effects": "severe destruction and loss of life over large areas", "per_year": "fewer than 3"},
     ]
 
-    earthquake_data['Richter Category'] = earthquake_data['Richter Category'].apply(getClass)
+    # Remove special characters from latitude and longitude column names
+    earthquake_data.rename(columns=lambda x: x.replace('Latitude(ÂºN)', 'Latitude').replace('Longitude(ÂºE)', 'Longitude'), inplace=True)
 
-    fig = px.density_mapbox(earthquake_data, lat='Latitude(ÂºN)', lon='Longitude(ÂºE)',
-                            z='Mag', radius=10, hover_name='Richter Category',
+    # Density Mapbox
+    # fig = px.density_mapbox(earthquake_data, lat='Latitude', lon='Longitude',
+    #                         z='Mag', radius=4, hover_name='Day',
+    #                         title='Philippine Seismic Activity Map (2018-2024)',
+    #                         zoom=4.25)
+    
+    # Scatter Mapbox
+    fig = px.scatter_mapbox(earthquake_data, lat='Latitude', lon='Longitude',
+                            color='Richter Category',
                             title='Philippine Seismic Activity Map (2018-2024)',
-                            zoom=4.25)
+                            zoom=3.75,
+                            color_discrete_sequence=["fuchsia"])    
 
     fig.update_layout(
         mapbox_style="open-street-map",
@@ -65,7 +74,6 @@ def index():
 
     fig_container = fig.to_html(full_html=False)    
     return render_template('earthquake.html', richter_data=richter_data, fig=fig_container)
-
 
 @app.route('/predict', methods=['POST', 'GET'])
 def predict():
