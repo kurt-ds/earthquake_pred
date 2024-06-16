@@ -94,6 +94,12 @@ def predict():
         {"magnitude": "8.0 and higher", "category": "great", "effects": "severe destruction and loss of life over large areas", "per_year": "fewer than 3"},
     ]
 
+    date_value = request.form.get('Date')
+    time_value = request.form.get('Time')
+    latitude_value = request.form.get('Latitude')
+    longitude_value = request.form.get('Longitude')
+    zipcode_value = request.form.get('Zipcode')
+
     date = request.form.get('Date')
     date_obj = datetime.strptime(date, "%Y-%m-%d")
     day = int(date_obj.day)
@@ -140,10 +146,11 @@ def predict():
 
     fig_container = fig.to_html(full_html=False)
 
-    if (len(category) > 8):
-        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container)
+    if len(category) > 8:
+        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container, date_input=date_value, time_input=time_value, latitude_input=latitude_value, longitude_input=longitude_value, zipcode_input=zipcode_value)
     else:
-        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container)
+        return render_template('earthquake.html', pred=category, richter_data=richter_data, fig=fig_container, date_input=date_value, time_input=time_value, latitude_input=latitude_value, longitude_input=longitude_value, zipcode_input=zipcode_value)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
