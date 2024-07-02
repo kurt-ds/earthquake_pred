@@ -3,7 +3,3 @@ earthquake_venv
 
 # node modules
 node_modules
-
-
-#model
-model.pkl

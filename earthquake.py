@@ -6,7 +6,7 @@ import warnings
 import pickle
 warnings.filterwarnings("ignore")
 
-data = pd.read_csv('earthquake_dataset.csv')
+data = pd.read_csv('earthquake_data.csv')
 X = data.drop(['Richter Category', 'Magnitude', 'Depth(km)', 'City', 'Province', 'Distance(km)'], axis=1)
 y = data['Richter Category']
 
